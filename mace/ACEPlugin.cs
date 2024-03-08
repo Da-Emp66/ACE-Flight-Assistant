@@ -1,4 +1,4 @@
- using System;
+using System;
 using System.IO;
 using System.Windows.Forms;
 using System.Collections.Generic;
@@ -19,12 +19,12 @@ using BSI.MACE.Network.DIS;
 
 namespace CodeScriptPlugIn_NS
 {
-    /// <summary>
-    /// Unique class holding execute method.
-    /// </summary>
-    public class SDTest
-    {
-        /* 
+	/// <summary>
+	/// Unique class holding execute method.
+	/// </summary>
+	public class ACEPlugin
+	{
+		/* 
 
           UNCOMMENT THIS BLOCK IF YOU WANT TO TRIGGER YOUR
           CODESCRIPT VIA A BUTTON ADDED TO THE MACE UI
@@ -49,22 +49,22 @@ namespace CodeScriptPlugIn_NS
         public static string ButtonName = "Button Name";
         //*/
 
-        /// <summary>
-        /// Method called when the codescript object is initialized. Any timers or 
-        /// event handlers should be created here.
-        /// </summary> 
-        public static void Initialize(IMACEPlugInHost host)
-        {
-            // YOUR CODE HERE
-        }
- 
-        /// <summary>
-        /// Method called when a codescript is run, if no button is defined for the code script,
-        /// or called when the button defined by the codescript is clicked. 
-        /// </summary>
-        /// <param name="host">The MACE plug in system interface.</param>
-        public static void Execute(IMACEPlugInHost host)
-        {
+		/// <summary>
+		/// Method called when the codescript object is initialized. Any timers or 
+		/// event handlers should be created here.
+		/// </summary> 
+		public static void Initialize(IMACEPlugInHost host)
+		{
+			// YOUR CODE HERE
+		}
+
+		/// <summary>
+		/// Method called when a codescript is run, if no button is defined for the code script,
+		/// or called when the button defined by the codescript is clicked. 
+		/// </summary>
+		/// <param name="host">The MACE plug in system interface.</param>
+		public static void Execute(IMACEPlugInHost host)
+		{
 			// Function Definitions
 			IPhysicalEntity SpawnEntity(string callsign, string type, GeoPoint location)
 			{
@@ -73,8 +73,8 @@ namespace CodeScriptPlugIn_NS
 				return physicalEntity;
 			}
 			SpawnEntity("ACE1", "C-17A", new GeoPoint(28.0, -78.18, 1000.0));
-			
-			
+
+
 			// Global State Information
 			string specifiedXml = "";
 			var missionFilepath = "C:\\Users\\Public\\Public Documents\\MACE\\missions\\" + specifiedXml;
@@ -93,7 +93,7 @@ namespace CodeScriptPlugIn_NS
 			{
 				listener.BeginGetContext(new AsyncCallback(Listen), listener);
 			}
-			
+
 			void Listen(IAsyncResult result)
 			{
 				if (listener.IsListening)
@@ -120,7 +120,7 @@ namespace CodeScriptPlugIn_NS
 						Console.WriteLine(s);
 						Console.WriteLine("End of data:");
 						IPhysicalEntity physicalEntity2 = SpawnEntity("ACE1", "C-17A", new GeoPoint(28.0, -78.18, 1000.0));
-			 			var parameters = "22.0,-81.1,140";
+						var parameters = "22.0,-81.1,140";
 						host.Mission.ActionRequest(disMACEenumerations.RallyTo, parameters, physicalEntity);
 						reader.Close();
 						body.Close();
@@ -131,7 +131,7 @@ namespace CodeScriptPlugIn_NS
 					response.ContentType = "text/plain";
 					response.OutputStream.Write(new byte[] { }, 0, 0);
 					response.OutputStream.Close();
-					
+
 					Receive();
 				}
 			}
@@ -140,7 +140,7 @@ namespace CodeScriptPlugIn_NS
 			{
 				listener.Start();
 				Receive();
-				while (alive) {}
+				while (alive) { }
 				listener.Stop();
 			}
 
@@ -154,30 +154,30 @@ namespace CodeScriptPlugIn_NS
 			//missionLoaded = host.Mission.MissionCommands.LoadMission(missionFilepath);
 			//int i = 0;
 			//while (i < 25) {
-	        
+
 			// Save the mission
 			//host.Mission.MissionCommands.SaveMission(missionFilepath);
 
 			// Delete Entity
 			//host.Mission.MissionCommands.RemoveEntity(physicalEntity);
-			
+
 			// Perform 
 			//var parameters = "22.0,-81.1,1,10,26.0,-81.1";
 			//host.Mission.ActionRequest(disMACEenumerations.StartLoiter, parameters, physicalEntity);
 			//i++;
 			//}
-        }
+		}
 
-        /// <summary>
-        /// Method called when the codescript object is unloaded from MACE.
-        /// Stop timers, unsubscribe to event handlers, and 
-        /// otherwise clean up references here.
-        /// </summary>
-        public static void Close()
-        {
-            // YOUR CODE HERE
-        }
-   }
+		/// <summary>
+		/// Method called when the codescript object is unloaded from MACE.
+		/// Stop timers, unsubscribe to event handlers, and 
+		/// otherwise clean up references here.
+		/// </summary>
+		public static void Close()
+		{
+			// YOUR CODE HERE
+		}
+	}
 }
 
 
