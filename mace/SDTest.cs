@@ -1,4 +1,4 @@
- using System;
+using System;
 using System.IO;
 using System.Windows.Forms;
 using System.Collections.Generic;
@@ -72,7 +72,7 @@ namespace CodeScriptPlugIn_NS
 				IPhysicalEntity physicalEntity = host.Mission.MissionCommands.CreateEntity(modelAndType, location, callsign);
 				return physicalEntity;
 			}
-			SpawnEntity("ACE1", "C-17A", new GeoPoint(28.0, -78.18, 1000.0));
+			var physicalEntity = SpawnEntity("ACE0", "C-17A", new GeoPoint(28.0, -78.18, 1000.0));
 			
 			
 			// Global State Information
@@ -100,7 +100,14 @@ namespace CodeScriptPlugIn_NS
 				{
 					var context = listener.EndGetContext(result);
 					var request = context.Request;
-					IPhysicalEntity physicalEntity = SpawnEntity("ACE1", "C-17A", new GeoPoint(28.0, -78.18, 1000.0));
+					
+					// Delete Entity
+					host.Mission.MissionCommands.RemoveEntity(physicalEntity);
+
+					physicalEntity = SpawnEntity("ACEn", "C-17A", new GeoPoint(28.0, -78.18, 1000.0));
+
+					var parameters = "32.36,-70.0,1000";
+					host.Mission.ActionRequest(disMACEenumerations.RallyTo, parameters, physicalEntity);
 
 					Console.WriteLine($"{request.HttpMethod} {request.Url}");
 					if (request.HasEntityBody)
@@ -119,9 +126,6 @@ namespace CodeScriptPlugIn_NS
 						string s = reader.ReadToEnd();
 						Console.WriteLine(s);
 						Console.WriteLine("End of data:");
-						IPhysicalEntity physicalEntity2 = SpawnEntity("ACE1", "C-17A", new GeoPoint(28.0, -78.18, 1000.0));
-			 			var parameters = "22.0,-81.1,140";
-						host.Mission.ActionRequest(disMACEenumerations.RallyTo, parameters, physicalEntity);
 						reader.Close();
 						body.Close();
 					}
@@ -158,8 +162,7 @@ namespace CodeScriptPlugIn_NS
 			// Save the mission
 			//host.Mission.MissionCommands.SaveMission(missionFilepath);
 
-			// Delete Entity
-			//host.Mission.MissionCommands.RemoveEntity(physicalEntity);
+			
 			
 			// Perform 
 			//var parameters = "22.0,-81.1,1,10,26.0,-81.1";
@@ -179,6 +182,24 @@ namespace CodeScriptPlugIn_NS
         }
    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
