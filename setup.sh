@@ -11,3 +11,6 @@ pip3 install --upgrade pip
 pip3 install mycroft-mimic3-tts[all]
 # Test install
 mimic3 --voice en_US/vctk_low#p236 "Hooray! The text-to-speech model is speaking" > tests/tts-audio.wav
+
+# Copy the MACE plugin into a directory MACE will recognize
+cp ./mace/SDTest.cs "/mnt/c/Users/Public/Public Documents/MACE/CodeScripts/SDTest.cs"
