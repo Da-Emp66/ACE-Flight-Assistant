@@ -19,6 +19,50 @@ using BSI.MACE.Network.DIS;
 
 namespace CodeScriptPlugIn_NS
 {
+	public const int DEFAULT_ORBIT_RADIUS = 5;
+
+	enum OrbitDirection
+	{
+		Left,
+		Right,
+		Unspecified
+	}
+
+	enum OrbitType
+	{
+		Circle,
+		Polygon,
+		Figure8,
+		RaceTrack,
+		Unspecified
+	}
+
+	struct Coordinate
+	{
+		public float latitude;
+		public float longitude;
+		public Coordinate(float lat, float lon)
+		{
+			latitude = lat;
+			longitude = lon;
+		}
+		public override string ToString()
+		{
+			return "" + latitude + "," + longitude;
+		}
+	}
+
+	// struct Weapon
+	// {
+	// 	kind;
+	// 	domain;
+	// 	country;
+	// 	category;
+	// 	subCategory;
+	// 	specific;
+	// 	extra;
+	// }
+
     /// <summary>
     /// Unique class holding execute method.
     /// </summary>
@@ -55,7 +99,7 @@ namespace CodeScriptPlugIn_NS
         /// </summary> 
         public static void Initialize(IMACEPlugInHost host)
         {
-            // YOUR CODE HERE
+            
         }
  
         /// <summary>
@@ -65,7 +109,10 @@ namespace CodeScriptPlugIn_NS
         /// <param name="host">The MACE plug in system interface.</param>
         public static void Execute(IMACEPlugInHost host)
         {
-			// Function Definitions
+
+			/// Function Definitions
+
+			// Manipulate Scenario (CRUD)
 			IPhysicalEntity SpawnEntity(string callsign, string type, GeoPoint location)
 			{
 				IMissionCommands.ModelAndTypeStructure modelAndType = new IMissionCommands.ModelAndTypeStructure() { Model = IMissionCommands.ModelAndTypeStructure.ModelTypes.Platform, Type = type };
@@ -74,6 +121,49 @@ namespace CodeScriptPlugIn_NS
 			}
 			var physicalEntity = SpawnEntity("ACE0", "C-17A", new GeoPoint(28.0, -78.18, 1000.0));
 			
+			// Manipulate Entity Behaviors (All defined in MACE Network Interface)
+			void FlyToLocation(IPhysicalEntity physicalEntity, Coordinate coordinate, OrbitDirection direction = OrbitDirection.Right, int radiusInNauticalMiles = DEFAULT_ORBIT_RADIUS, Coordinate coordinate2 = default, OrbitType orbitType = OrbitType.Unspecified)
+			{
+				if (orbitType == OrbitType.Unspecified)
+				{
+					var parameters = "" + coordinate + "," + (int)direction + "," + radiusInNauticalMiles;
+					host.Mission.ActionRequest(disMACEenumerations.StartLoiter, parameters, physicalEntity);
+				}
+				else if (orbitType == OrbitType.Circle)
+				{
+					var parameters = "" + coordinate + "," + (int)direction + "," + radiusInNauticalMiles;
+					host.Mission.ActionRequest(disMACEenumerations.StartLoiter, parameters, physicalEntity);
+				}
+				else if (orbitType == OrbitType.RaceTrack)
+				{
+					var parameters = "" + coordinate + "," + (int)direction + "," + radiusInNauticalMiles + "," + coordinate2;
+					host.Mission.ActionRequest(disMACEenumerations.StartLoiter, parameters, physicalEntity);
+				}
+				else if (orbitType == OrbitType.Figure8)
+				{
+					var parameters = "" + coordinate + "," + (int)direction + "," + radiusInNauticalMiles + "," + coordinate2 + "," + (int)orbitType;
+					host.Mission.ActionRequest(disMACEenumerations.StartLoiter, parameters, physicalEntity);
+				}
+				else if (orbitType == OrbitType.Polygon)
+				{
+					var parameters = "" + coordinate + "," + (int)direction + "," + radiusInNauticalMiles + "," + "," + "," + (int)orbitType;
+					host.Mission.ActionRequest(disMACEenumerations.StartLoiter, parameters, physicalEntity);
+				}
+			}
+			// void OldFlyToLocation(float latitude, float longitude, int speedInKnots)
+			// {
+			// 	var parameters = "" + latitude + "," + longitude + "," + speedInKnots;
+			// 	host.Mission.ActionRequest(disMACEenumerations.RallyTo, parameters, physicalEntity);
+			// }
+			void Orbit(IPhysicalEntity physicalEntity)
+			{
+				// TODO: Get coordinate of the entity requested
+				FlyToLocation(new Coordinate(latitude, longitude));
+			}
+			void ShootWeapon(IPhysicalEntity physicalEntity)
+			{
+				host.Mission.ActionRequest(disMACEenumerations.ShootWeapon, parameters, physicalEntity);
+			}
 			
 			// Global State Information
 			string specifiedXml = "";
@@ -128,6 +218,8 @@ namespace CodeScriptPlugIn_NS
 						Console.WriteLine("End of data:");
 						reader.Close();
 						body.Close();
+
+						// TODO: Get the command from the body, do `switch cmd {...}`
 					}
 
 					var response = context.Response;
@@ -178,7 +270,7 @@ namespace CodeScriptPlugIn_NS
         /// </summary>
         public static void Close()
         {
-            // YOUR CODE HERE
+            
         }
    }
 }
